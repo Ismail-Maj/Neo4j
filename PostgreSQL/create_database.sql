@@ -1,25 +1,28 @@
--- netflix user must be created beforehand
+REASSIGN OWNED BY netflix TO postgres;
+DROP OWNED BY netflix;
+DROP USER IF EXISTS netflix;
+CREATE USER netflix LOGIN PASSWORD 'netflix';
+DROP TABLE netflixLibrary;
 
-DROP DATABASE IF EXISTS netflix;
-
-CREATE DATABASE netflix;
-
-CREATE TABLE [IF NOT EXISTS] netflixLibrary(
-    ID int UNIQUE KEY,
-    imdbID VARCHAR(100),
+CREATE TABLE netflixLibrary(
+    ID int unique,
+    IMDB_titleID VARCHAR(100),
     category VARCHAR(500),
     title VARCHAR(500),
-    director VARCHAR(500),
-    cast VARCHAR(500),
-    country VARCHAR(500),
-    aired_date VARCHAR(500),
     release_year int,
-    rating VARCHAR(500),
-    duration int,
-    genre VARCHAR(500),
-    summary VARCHAR(2000),
-    rating int,
-    ratingPopulation int
-)
+    seasons int,
+    movie_duration int,
+    average_rating float,
+    number_rating int,
+    director VARCHAR(500),
+    casting VARCHAR(2000),
+    country VARCHAR(500),
+    date_added DATE,
+    parental_guideline VARCHAR(500),
+    listed_in VARCHAR(1000),
+    summary VARCHAR(2000)
+);
 
-ALTER DATABASE netflix OWNER TO netflix;
+ALTER TABLE netflixLibrary OWNER TO netflix;
+
+\COPY netflixLibrary FROM '../Netflix_Library_join_IMDB_rating.csv' DELIMITER '|' CSV HEADER;

@@ -1,1 +1,0 @@
-LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/Ismail-Maj/PostgreSQL-vs-Neo4j/main/Netflix_Library_join_IMDB_rating.csv" AS row FIELDTERMINATOR '|' CREATE (n:netflixLibrary) set n = row;

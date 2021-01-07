@@ -9,16 +9,18 @@ For this Introduction, we're going to use a **Netflix** shows data set in the [o
 |-----:|----------:|:----------|:-------|:----------|---------------:|---------:|-------------:|:------------------------------------------------|:------|-----------:|----------:|:------------------|:----------------|:------------------------------|:---------------------------------------------------|:---------------------------------------------------|
 | 3524 |  70131314 | tt1375666 | Movie  | Inception |           2010 |      8.8 |  2.05438e+06 | Action & Adventure, Sci-Fi & Fantasy, Thrillers | PG-13 |        148 |       nan | Christopher Nolan | January 1, 2020 | United States, United Kingdom | Leonardo DiCaprio, Joseph Gordon-Levitt, Ellen Pag | In this mind-bending sci-fi thriller, a man runs a |
 
-*The ids can be used to visit information source.*
+*The ids can be used to visit information source.*  
 https://www.imdb.com/title/tt1375666  
-https://www.netflix.com/title/70131314  
+https://www.netflix.com/title/70131314    
 
 In *Neo4j*, data is stored in a property graph, the units of such graph are nodes and relationships.  
 
 <p align="center">
   <img src="image/graph.png" />
 </p>
+
 Each node contains properties stored as key-value pairs.
+
 ```yaml
 {
   "title": "Inception",
@@ -29,7 +31,7 @@ Each node contains properties stored as key-value pairs.
   "date_added": "January 1, 2020",
   "popularity": 2054380,
   "rating": 8.8,
-  "description": "In this mind-bending sci-fi thriller, a man runs an espionage business built around entering the subconscious of his targets to mold their thoughts."
+  "description": "In this mind-bending sci-fi thriller..."
 }
 ```
 
@@ -39,7 +41,7 @@ Like **SQL**, it can be used to create, read, update and delete data.
 It's ASCII-art syntax makes it human readable.  
 
 ```Cypher
-MATCH (p:Person)-[:ACTED_IN]->(n:Shows {title:'Inception'}) RETURN p
+MATCH (p:Person)-[:ACTED_IN]->(n:Shows {title:'Inception'}) RETURN p.name
 ```
 [Guide to learn Cypher](https://github.com/adambard/learnxinyminutes-docs/blob/master/cypher.html.markdown)
 

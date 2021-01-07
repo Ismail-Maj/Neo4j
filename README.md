@@ -197,7 +197,23 @@ WHERE popularity > 200 ORDER BY rating DESC LIMIT 10;
   <img src="image/Q1.png" />
 </p>
 
-### Aaron Paul co-actors
+### Average rating of Ross's film
+
+```SQL
+
+Cypher:1ms
+MATCH (bob:Person {name:'Bob Ross'})-[:ACTED_IN]-(n:Show)
+RETURN avg(n.rating)
+
+PSQL: 3ms
+SELECT avg(rating)
+from netflixlibrary net where net.casting like '%Bob Ross%';
+
+result: 9.4
+```
+
+
+### Aaron Paul's co-actors
 
 ```SQL
 Cypher: 12ms
@@ -269,13 +285,71 @@ GROUP BY c_name) AS T1 WHERE sum is not null ORDER BY sum;
 ...
 ```
 
-### Most infamous shows in Netflix
+### Popular shows with good rating
+
+```SQL
+Cypher: 15ms
+MATCH (n:Show) WHERE EXISTS(n.rating) 
+WITH n ORDER BY n.popularity DESC LIMIT 200
+RETURN n.title ORDER BY n.rating DESC LIMIT 20
+
+PSQL: 5ms
+SELECT * FROM 
+(SELECT title,rating,popularity FROM netflixlibrary WHERE popularity is not null  ORDER BY popularity DESC LIMIT 200) as T1 
+ORDER BY rating DESC LIMIT 20;
+
+╒═══════════════════════════════════════════════╤══════════╕
+│"n.title"                                      │"n.rating"│
+╞═══════════════════════════════════════════════╪══════════╡
+│"Breaking Bad"                                 │9.5       │
+├───────────────────────────────────────────────┼──────────┤
+│"Sherlock"                                     │9.1       │
+├───────────────────────────────────────────────┼──────────┤
+│"DEATH NOTE"                                   │9.0       │
+├───────────────────────────────────────────────┼──────────┤
+│"The Office (U.S.)"                            │8.9       │
+├───────────────────────────────────────────────┼──────────┤
+│"Schindler's List"                             │8.9       │
+├───────────────────────────────────────────────┼──────────┤
+│"Friends"                                      │8.9       │
+├───────────────────────────────────────────────┼──────────┤
+│"The Lord of the Rings: The Return of the King"│8.9       │
+├───────────────────────────────────────────────┼──────────┤
+│"Pulp Fiction"                                 │8.9       │
+├───────────────────────────────────────────────┼──────────┤
+│"Peaky Blinders"                               │8.8       │
+├───────────────────────────────────────────────┼──────────┤
+│"Narcos"                                       │8.8       │
+├───────────────────────────────────────────────┼──────────┤
+│"Black Mirror"                                 │8.8       │
+├───────────────────────────────────────────────┼──────────┤
+│"Dark"                                         │8.8       │
+├───────────────────────────────────────────────┼──────────┤
+│"Inception"                                    │8.8       │
+├───────────────────────────────────────────────┼──────────┤
+│"The Matrix"                                   │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"Arrested Development"                         │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"The Lord of the Rings: The Two Towers"        │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"Stranger Things"                              │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"House of Cards"                               │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"Better Call Saul"                             │8.7       │
+├───────────────────────────────────────────────┼──────────┤
+│"The Seven Deadly Sins"                        │8.6       │
+└───────────────────────────────────────────────┴──────────┘
+```
+
+### infamous shows in Netflix
 
 ```SQL
 Cypher: 10ms
 MATCH (n:Show) WHERE EXISTS(n.rating) 
-WITH n ORDER BY n.popularity DESC LIMIT 200 #top 200 by popularity
-RETURN n.title ORDER BY n.rating LIMIT 10 #bottom 10 by rating
+WITH n ORDER BY n.popularity DESC LIMIT 200
+RETURN n.title ORDER BY n.rating LIMIT 10
 
 PSQL: 2ms
 SELECT * FROM 
@@ -305,11 +379,11 @@ ORDER BY rating LIMIT 10;
 └────────────────────────────────────────────────────┘
 ```
 
-### Aaron paul co-actors and co-actors's co-actors recursively
+### Aaron paul's co-actors and co-actors's co-actors recursively
 
 ```SQL
 Cypher: 348ms
-MATCH (a:Person {name:"Aaron Paul"})-[*1..5]-(o:Person) 
+MATCH (a:Person {name:"Aaron Paul"})-[:ACTED_IN* 1..12]-(o:Person) 
 RETURN count(DISTINCT o)
 
 PSQL: 38200ms
@@ -344,6 +418,19 @@ PSQL: ???
   <img src="image/Q2.png" />
 </p>
 
+### Analysis
+
+As we've seen, PSQL runs up against major performance challenges when it tries to navigate connected data, this is mostly due to the expensive cost of joins.  
+
+PSQL queries not only take more time to run, but they also take more time to write and understand.  
+its inherent complexity will eventually lead to coding mistakes and bad maintainability.  
+
+On top of that, Neo4j offers great visualization tools and interactive manipulation which is highly valuable to data scientists and researchers.
+
+But this comes at a hefty price, Neo4j is a memory hog.
+
+SQL as we've seen in the benchmarks, still benefits from optimization and stablility due to being the standard for so long.  
+When scalability and exploration is not a concern, SQL still dominates NoSQL counterparts.
 
 
 

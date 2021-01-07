@@ -19,7 +19,7 @@ In *Neo4j*, data is stored in a property graph, the units of such graph are node
   <img src="image/graph.png" />
 </p>
 
-Each node contains properties stored as key-value pairs.
+Each unit contains properties stored as key-value pairs.
 
 ```yaml
 {
@@ -55,24 +55,20 @@ chmod u+x neo4j-desktop-1.3.11-x86_64.AppImage
 ./neo4j-desktop-1.3.11-x86_64.AppImage
 ```
 
-Create a new database using GUI and run this [Cypher script]().  
+Create a new database using GUI and run this [Cypher script](https://github.com/Ismail-Maj/Neo4j/blob/main/init.cql).  
 *Some memory tuning might be necessary https://neo4j.com/developer/guide-performance-tuning/*  
-
-## Data exploration
-
-In this section, we are going to compare Neo4j with  **PostgreSQL** queries by expressivity and performance.  
 
 ## Queries
 
 In this section, we are going to compare Neo4j with  **PostgreSQL** queries by expressivity and performance.  
 
-### Average rating of the netflix database:
+### Average rating of the netflix database
 
 ```SQL
 Cypher: 3ms
 MATCH (n:Show) RETURN AVG(n);
 
-PSQL   : 2ms
+PSQL: 2ms
 SELECT AVG(rating) FROM netflixlibrary;
 
 result: 6.584
@@ -85,7 +81,7 @@ Cypher: 5ms
 MATCH (n:Show)-[:GUIDELINE]->(pg:PG) 
 RETURN pg, avg(n.rating), count(n) AS avg ORDER BY avg;
 
-PSQL   : 4ms
+PSQL: 4ms
 SELECT PG,avg(rating),COUNT(*) FROM netflixlibrary GROUP BY PG ORDER BY PG;
 
 ╒═══════════════════╤══════════════════╤══════════╕
@@ -129,7 +125,7 @@ MATCH (c:Country)<-[:LOCATION]-(n:Show)
 RETURN c.name AS name, avg(n.rating) AS rating, COUNT(n) as cnt 
 ORDER BY cnt
 
-SQL   : 18ms
+PSQL: 18ms
 SELECT TRIM(c_name),avg(rating),count(*)
 FROM netflixlibrary net,unnest(string_to_array(net.country, ',')) c_name
 GROUP BY c_name ORDER BY avg;
@@ -167,7 +163,7 @@ Cypher: 8ms
 MATCH (n:Show) WITH n WHERE n.popularity > 200 
 RETURN n.title ORDER BY n.rating DESC LIMIT 10
 
-SQL   : 3ms
+PSQL: 3ms
 select title FROM netflixlibrary 
 WHERE popularity > 200 ORDER BY rating DESC LIMIT 10;
 
@@ -195,7 +191,7 @@ WHERE popularity > 200 ORDER BY rating DESC LIMIT 10;
 │"The Vietnam War: A Film by Ken Burns and Lynn Novick" │
 └───────────────────────────────────────────────────────┘
 ```
-#### Visualizing top 5
+#### top 5
 
 <p align="center">
   <img src="image/Q1.png" />
@@ -207,7 +203,7 @@ WHERE popularity > 200 ORDER BY rating DESC LIMIT 10;
 Cypher: 12ms
 MATCH (p:Person{name:'Aaron Paul'})-[:ACTED_IN]->(n:Show)<-[:ACTED_IN]-(a:Person) return a.name
 
-PSQL   : 4ms
+PSQL: 4ms
 from netflixlibrary net,unnest(string_to_array(net.casting, ',')) name
 where net.casting like '%Aaron Paul%' except values('Aaron Paul');
 ```
@@ -219,7 +215,7 @@ Cypher: 4ms
 MATCH (p:Person)-[:ACTED_IN]->(n:Show)
 RETURN p.name, sum(n.popularity) AS sum ORDER BY sum DESC
 
-PSQL   : 65ms
+PSQL: 65ms
 select * from (SELECT TRIM(c_name),sum(popularity)
 FROM netflixlibrary net,unnest(string_to_array(net.casting, ',')) c_name
 GROUP BY c_name) AS T1 WHERE sum is not null ORDER BY sum;
@@ -281,8 +277,10 @@ MATCH (n:Show) WHERE EXISTS(n.rating)
 WITH n ORDER BY n.popularity DESC LIMIT 200 #top 200 by popularity
 RETURN n.title ORDER BY n.rating LIMIT 10 #bottom 10 by rating
 
-PSQL   : 2ms
-SELECT * FROM (SELECT title,rating,popularity FROM netflixlibrary WHERE popularity is not null  ORDER BY popularity DESC LIMIT 200) as T1 ORDER BY rating LIMIT 10;
+PSQL: 2ms
+SELECT * FROM 
+(SELECT title,rating,popularity FROM netflixlibrary WHERE popularity is not null  ORDER BY popularity DESC LIMIT 200) as T1 
+ORDER BY rating LIMIT 10;
 
 ╒════════════════════════════════════════════════════╕
 │"Ghost Rider"                                       │
@@ -314,7 +312,7 @@ Cypher: 348ms
 MATCH (a:Person {name:"Aaron Paul"})-[*1..5]-(o:Person) 
 RETURN count(DISTINCT o)
 
-PSQL   : 38200ms
+PSQL: 38200ms
 WITH RECURSIVE subordinates AS (
         	SELECT DISTINCT TRIM(name) 
 		   	 FROM netflixlibrary net,unnest(string_to_array(net.casting, ',')) name 
@@ -330,6 +328,21 @@ FROM subordinates;
 result: 26258 out of 27405 actors
 ```
 
+### Shortest Path from Dicapprio to Reeves
+
+```SQL
+Cypher: 2ms
+MATCH p=shortestPath(
+(bacon:Person {name:"Leonardo DiCaprio"})-[:ACTED_IN*]-(meg:Person {name:"Keanu Reeves"})
+)
+RETURN p
+
+PSQL: ???
+```
+
+<p align="center">
+  <img src="image/Q2.png" />
+</p>
 
 
 

@@ -45,6 +45,24 @@ MATCH (p:Person)-[:ACTED_IN]->(n:Shows {title:'Inception'}) RETURN p.name
 ```
 [Guide to learn Cypher](https://github.com/adambard/learnxinyminutes-docs/blob/master/cypher.html.markdown)
 
+## Getting started
+
+### Linux
+Download neo4j from this link https://neo4j.com/download-center/
+
+``` bash
+chmod u+x neo4j-desktop-1.3.11-x86_64.AppImage
+./neo4j-desktop-1.3.11-x86_64.AppImage
+```
+
+Create a new database using GUI and run this [Cypher script]().
+
+## Queries
+
+In this section, we are going to compare Neo4j with SQL ***Postgres*** queries by expressivity and performance.
+
+
+
 
 
 

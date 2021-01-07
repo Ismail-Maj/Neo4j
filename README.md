@@ -168,8 +168,6 @@ select title FROM netflixlibrary
 WHERE popularity > 200 ORDER BY rating DESC LIMIT 10;
 
 ╒═══════════════════════════════════════════════════════╕
-│"n.title"                                              │
-╞═══════════════════════════════════════════════════════╡
 │"Planet Earth II"                                      │
 ├───────────────────────────────────────────────────────┤
 │"Breaking Bad"                                         │
@@ -237,8 +235,6 @@ FROM netflixlibrary net,unnest(string_to_array(net.casting, ',')) c_name
 GROUP BY c_name) AS T1 WHERE sum is not null ORDER BY sum;
 
 ╒═════════════════════════════╤═══════╕
-│"p.name"                     │"sum"  │
-╞═════════════════════════════╪═══════╡
 │"Hugo Weaving"               │5711561│
 ├─────────────────────────────┼───────┤
 │"Leonardo DiCaprio"          │4901110│
@@ -298,49 +294,47 @@ SELECT * FROM
 (SELECT title,rating,popularity FROM netflixlibrary WHERE popularity is not null  ORDER BY popularity DESC LIMIT 200) as T1 
 ORDER BY rating DESC LIMIT 20;
 
-╒═══════════════════════════════════════════════╤══════════╕
-│"n.title"                                      │"n.rating"│
-╞═══════════════════════════════════════════════╪══════════╡
-│"Breaking Bad"                                 │9.5       │
-├───────────────────────────────────────────────┼──────────┤
-│"Sherlock"                                     │9.1       │
-├───────────────────────────────────────────────┼──────────┤
-│"DEATH NOTE"                                   │9.0       │
-├───────────────────────────────────────────────┼──────────┤
-│"The Office (U.S.)"                            │8.9       │
-├───────────────────────────────────────────────┼──────────┤
-│"Schindler's List"                             │8.9       │
-├───────────────────────────────────────────────┼──────────┤
-│"Friends"                                      │8.9       │
-├───────────────────────────────────────────────┼──────────┤
-│"The Lord of the Rings: The Return of the King"│8.9       │
-├───────────────────────────────────────────────┼──────────┤
-│"Pulp Fiction"                                 │8.9       │
-├───────────────────────────────────────────────┼──────────┤
-│"Peaky Blinders"                               │8.8       │
-├───────────────────────────────────────────────┼──────────┤
-│"Narcos"                                       │8.8       │
-├───────────────────────────────────────────────┼──────────┤
-│"Black Mirror"                                 │8.8       │
-├───────────────────────────────────────────────┼──────────┤
-│"Dark"                                         │8.8       │
-├───────────────────────────────────────────────┼──────────┤
-│"Inception"                                    │8.8       │
-├───────────────────────────────────────────────┼──────────┤
-│"The Matrix"                                   │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"Arrested Development"                         │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"The Lord of the Rings: The Two Towers"        │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"Stranger Things"                              │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"House of Cards"                               │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"Better Call Saul"                             │8.7       │
-├───────────────────────────────────────────────┼──────────┤
-│"The Seven Deadly Sins"                        │8.6       │
-└───────────────────────────────────────────────┴──────────┘
+╒═══════════════════════════════════════════════╕
+│"Breaking Bad"                                 │
+├───────────────────────────────────────────────┤
+│"Sherlock"                                     │
+├───────────────────────────────────────────────┤
+│"DEATH NOTE"                                   │
+├───────────────────────────────────────────────┤
+│"The Office (U.S.)"                            │
+├───────────────────────────────────────────────┤
+│"Schindler's List"                             │
+├───────────────────────────────────────────────┤
+│"Friends"                                      │
+├───────────────────────────────────────────────┤
+│"The Lord of the Rings: The Return of the King"│
+├───────────────────────────────────────────────┤
+│"Pulp Fiction"                                 │
+├───────────────────────────────────────────────┤
+│"Peaky Blinders"                               │
+├───────────────────────────────────────────────┤
+│"Narcos"                                       │
+├───────────────────────────────────────────────┤
+│"Black Mirror"                                 │
+├───────────────────────────────────────────────┤
+│"Dark"                                         │
+├───────────────────────────────────────────────┤
+│"Inception"                                    │
+├───────────────────────────────────────────────┤
+│"The Matrix"                                   │
+├───────────────────────────────────────────────┤
+│"Arrested Development"                         │
+├───────────────────────────────────────────────┤
+│"The Lord of the Rings: The Two Towers"        │
+├───────────────────────────────────────────────┤
+│"Stranger Things"                              │
+├───────────────────────────────────────────────┤
+│"House of Cards"                               │
+├───────────────────────────────────────────────┤
+│"Better Call Saul"                             │
+├───────────────────────────────────────────────┤
+│"The Seven Deadly Sins"                        │
+└───────────────────────────────────────────────┘
 ```
 
 ### infamous shows in Netflix
@@ -423,14 +417,103 @@ PSQL: ???
 As we've seen, PSQL runs up against major performance challenges when it tries to navigate connected data, this is mostly due to the expensive cost of joins.  
 
 PSQL queries not only take more time to run, but they also take more time to write and understand.  
-its inherent complexity will eventually lead to coding mistakes and bad maintainability.  
+Its inherent complexity will eventually lead to coding mistakes and bad maintainability.  
 
 On top of that, Neo4j offers great visualization tools and interactive manipulation which is highly valuable to data scientists and researchers.
 
 But this comes at a hefty price, Neo4j is a memory hog.
 
-SQL as we've seen in the benchmarks, still benefits from optimization and stablility due to being the standard for so long.  
-When scalability and exploration is not a concern, SQL still dominates NoSQL counterparts.
+SQL as we've seen in the benchmarks, still benefits from optimization and stability due to being the standard for so long.  
+When exploration and complex-joins are not a concern, SQL still dominates NoSQL counterparts.
+
+### Page Rank
+
+PageRank is the first algorithm used by Google to rank search engine.
+We're going to use it to evaluate a person's importance in the industry.
+
+The underlying assumption of PageRank is that a Person is more important if it has many relationships with important nodes.
+
+```SQL
+
+CALL gds.graph.create('project', ['Person','Show'], {
+	ACTED_IN: {
+    	orientation: 'UNDIRECTED'
+    },
+    DIRECTED: {
+    	orientation: 'UNDIRECTED'
+    }
+})
+
+CALL gds.pageRank.stream('project') YIELD nodeId, score
+WITH gds.util.asNode(nodeId) AS node, score
+WHERE node:Person
+RETURN node.name, score
+ORDER BY score DESC LIMIT 10
+
+╒════════════════════╤═════════════════╕
+│"node.name"         │"score"          │
+╞════════════════════╪═════════════════╡
+│"David Attenborough"│7.7568895956676  │
+├────────────────────┼─────────────────┤
+│"Anupam Kher"       │6.354905666736885│
+├────────────────────┼─────────────────┤
+│"Shah Rukh Khan"    │5.878990030821296│
+├────────────────────┼─────────────────┤
+│"Naseeruddin Shah"  │5.812050463556079│
+├────────────────────┼─────────────────┤
+│"Jan Suter"         │5.752281660877633│
+
+```
+
+
+
+```SQL
+#weighted page rank
+CALL gds.graph.create.cypher(
+    'proj',
+    'MATCH (n) WHERE n:Person OR n:Show  RETURN id(n) AS id',
+    'MATCH (a:Person)-[:ACTED_IN]-(b:Show) RETURN id(b) AS source, id(a) AS target, b.rating*b.popularity as weight'
+);
+
+MATCH (attack:Person)-[:ACTED_IN]->(c:Show) 
+WITH collect(c) AS sourceNodes
+call gds.pageRank.stream('proj', {
+	sourceNodes: sourceNodes,
+    relationshipWeightProperty: 'weight'
+})
+YIELD nodeId, score
+WHERE score > 0
+RETURN gds.util.asNode(nodeId).name AS name, score
+ORDER BY score DESC
+
+╒════════════════════════╤═══════════════════╕
+│"name"                  │"score"            │
+╞════════════════════════╪═══════════════════╡
+│"David Attenborough"    │2.0399998784065247 │
+├────────────────────────┼───────────────────┤
+│"Samuel West"           │1.1806825994513928 │
+├────────────────────────┼───────────────────┤
+│"Jeff Dunham"           │0.9881249569356442 │
+├────────────────────────┼───────────────────┤
+│"Craig Sechler"         │0.7649999797344208 │
+├────────────────────────┼───────────────────┤
+│"Bill Burr"             │0.663000026345253  │
+```
+
+### Bloom
+
+Bloom is a code-free data visualization tool.
+
+<p align="center">
+  <img src="image/visualization2.png" />
+</p>
+
+<p align="center">
+  <img src="image/visualization3.png" />
+</p>
+
+We can infere from this visualization that there is a big cluster in the middle of actors directors and movies that could represent "Hollywood".
+
 
 
 
